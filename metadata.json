@@ -1,0 +1,6 @@
+{
+  "name": "Cymatic Matter Simulator",
+  "description": "Real-time Cymatic Matter Simulation web application with 2D/3D physics, standing waves, frequency controls, and micro-to-macro scenarios.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
