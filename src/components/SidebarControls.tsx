@@ -84,11 +84,19 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
   setIsSweeping
 }) => {
   const handleFreqChange = (value: number) => {
-    setState(prev => ({ ...prev, frequency: Math.max(1, Math.min(20000, value)) }));
+    setState(prev => ({ 
+      ...prev, 
+      frequency: Math.max(1, Math.min(20000, value)),
+      geometricMode: 'none'
+    }));
   };
 
   const handleAmpChange = (value: number) => {
-    setState(prev => ({ ...prev, amplitude: Math.max(0, Math.min(100, value)) }));
+    setState(prev => ({ 
+      ...prev, 
+      amplitude: Math.max(0, Math.min(100, value)),
+      geometricMode: 'none'
+    }));
   };
 
   const handleWaveform = (waveform: WaveformType) => {
@@ -395,107 +403,118 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
           </div>
         </div>
 
-        {/* 6.8 SACRED GEOMETRY EXPERIMENT DECK (ระบบจำลองเรขาคณิตศักดิ์สิทธิ์และสนามพลังงาน) */}
+        {/* 6.8 GEOMETRIC MODE CONTROLLER (โหมดเรขาคณิตสัจจะและพลังงานเสียง) */}
         <div className="mb-6 border-t border-slate-900 pt-5">
           <div className="flex items-center gap-2 mb-3">
-            <span className="text-sm">🔮</span>
-            <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider font-bold">แท่นจำลองเรขาคณิตศักดิ์สิทธิ์</span>
+            <span className="text-sm">🌀</span>
+            <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider font-bold">Geometric Mode (เรขาคณิตคลื่นเสียง)</span>
           </div>
 
           <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-850 space-y-3.5">
             <div className="text-[11px] text-slate-300 leading-relaxed">
-              สสารและของเหลวจะปรับเปลี่ยนรูปทรงสมมาตรโดยตรงตามการกระตุ้นของคลื่นเสียงความถี่เฉพาะตัว ก่อเกิดเป็นพลังงานตามแบบแผนคลาสสิกของยุโรปโบราณ
+              เลือกรูปแบบเรขาคณิตศักดิ์สิทธิ์เพื่อปรับความถี่เสียง (Frequency) และแอมพลิจูด (Amplitude) โดยอัตโนมัติ เพื่อดูโครงสร้างการจัดเรียงตัวของสสารเมื่อเข้าสู่ความถี่สั่นพ้องนั้นๆ
             </div>
 
-            {/* Geometry Selectors */}
-            <div className="space-y-2">
-              <span className="text-[10px] font-mono text-slate-500 block">คลิกจูนคลื่นพลังงานด่วน:</span>
-              
-              <button
-                onClick={() => {
-                  handleFreqChange(340);
-                  setState(prev => ({ ...prev, amplitude: 75, shape: 'circle' }));
-                }}
-                className={`w-full p-2.5 rounded-lg border text-left transition-all relative flex flex-col justify-center cursor-pointer ${
-                  Math.abs(state.frequency - 340) < 1
-                    ? 'bg-cyan-500/10 border-cyan-500 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.2)]'
-                    : 'bg-slate-950/60 border-slate-850 text-slate-400 hover:border-slate-700 hover:text-slate-200'
-                }`}
-              >
-                <div className="flex justify-between items-center w-full">
-                  <span className="font-sans font-bold text-xs flex items-center gap-1">
-                    🌟 ตราดาว 5 แฉก (Pentagram)
-                  </span>
-                  <span className="font-mono text-[11px] text-cyan-400 font-bold">340 Hz</span>
-                </div>
-                <div className="text-[9.5px] text-slate-500 mt-1 leading-normal">
-                  สมมาตรมนตร์ตราฝั่งตะวันตก ดึงสสารและแร่ธาตุเข้าสู่จุดร่วมเรขาคณิต 5 จุดศูนย์กลาง
-                </div>
-              </button>
-
-              <button
-                onClick={() => {
-                  handleFreqChange(612);
-                  setState(prev => ({ ...prev, amplitude: 80, shape: 'square' }));
-                }}
-                className={`w-full p-2.5 rounded-lg border text-left transition-all relative flex flex-col justify-center cursor-pointer ${
-                  Math.abs(state.frequency - 612) < 1
-                    ? 'bg-pink-500/10 border-pink-500 text-pink-300 shadow-[0_0_12px_rgba(236,72,153,0.2)]'
-                    : 'bg-slate-950/60 border-slate-850 text-slate-400 hover:border-slate-700 hover:text-slate-200'
-                }`}
-              >
-                <div className="flex justify-between items-center w-full">
-                  <span className="font-sans font-bold text-xs flex items-center gap-1">
-                    ✡️ ตราดาว 6 แฉก (Hexagram)
-                  </span>
-                  <span className="font-mono text-[11px] text-pink-400 font-bold">612 Hz</span>
-                </div>
-                <div className="text-[9.5px] text-slate-500 mt-1 leading-normal">
-                  สัญลักษณ์ความสมดุลคู่ตรงข้าม (ตราแห่งโซโลมอน) เกิดรูปแบบคริสตัลผลึกหิมะที่งดงาม
-                </div>
-              </button>
-
-              <button
-                onClick={() => {
-                  handleFreqChange(880);
-                  setState(prev => ({ ...prev, amplitude: 85, shape: 'circle' }));
-                }}
-                className={`w-full p-2.5 rounded-lg border text-left transition-all relative flex flex-col justify-center cursor-pointer ${
-                  Math.abs(state.frequency - 880) < 1
-                    ? 'bg-amber-500/10 border-amber-500 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.2)]'
-                    : 'bg-slate-950/60 border-slate-850 text-slate-400 hover:border-slate-700 hover:text-slate-200'
-                }`}
-              >
-                <div className="flex justify-between items-center w-full">
-                  <span className="font-sans font-bold text-xs flex items-center gap-1">
-                    ☸️ ตราดารารัศมี 8 แฉก (Octagram)
-                  </span>
-                  <span className="font-mono text-[11px] text-amber-400 font-bold">880 Hz</span>
-                </div>
-                <div className="text-[9.5px] text-slate-500 mt-1 leading-normal">
-                  เรขาคณิตศักดิ์สิทธิ์เชิงอภิปรัชญา การเรียงตัวสลับซับซ้อนสี่ทิศแปดด้านระนาบพลังงานสูง
-                </div>
-              </button>
+            {/* Grid Selectors */}
+            <div className="grid grid-cols-1 gap-2">
+              {[
+                { key: 'schumann', name: '🌀 Schumann Concentric (7.83 Hz)', thaiName: 'ชีพจรโลกกลมศูนย์กลางร่วม', freq: 7.83, amp: 90, shape: 'circle' as const },
+                { key: 'star-5', name: '🌟 Star-5 Pentagram (340 Hz)', thaiName: 'ดาวเวทมนตร์ 5 แฉกตะวันตก', freq: 340, amp: 75, shape: 'circle' as const },
+                { key: 'flower-of-life', name: '🌸 Flower of Life (432 Hz)', thaiName: 'ดอกไม้แห่งชีวิต / สมานฉันท์', freq: 432, amp: 80, shape: 'circle' as const },
+                { key: 'hexagonal-grid', name: '🕸️ Hexagonal Grid (528 Hz)', thaiName: 'โครงข่ายผลึกหกเหลี่ยมเซลล์', freq: 528, amp: 85, shape: 'square' as const },
+                { key: 'star-6', name: '✡️ Star-6 Hexagram (612 Hz)', thaiName: 'ตราดาว 6 แฉกแห่งโซโลมอน', freq: 612, amp: 80, shape: 'square' as const },
+                { key: 'star-8', name: '☸️ Star-8 Octagram (880 Hz)', thaiName: 'ดารารัศมีแปดทิศจูนพลังงาน', freq: 880, amp: 85, shape: 'circle' as const },
+                { key: 'crown-chakra', name: '🌐 Crown Chakra Fractal (963 Hz)', thaiName: 'จักระมงกุฎพันกลีบสากล', freq: 963, amp: 90, shape: 'circle' as const }
+              ].map((geom) => {
+                const isActive = state.geometricMode === geom.key;
+                return (
+                  <button
+                    key={geom.key}
+                    onClick={() => {
+                      setState(prev => ({
+                        ...prev,
+                        frequency: geom.freq,
+                        amplitude: geom.amp,
+                        shape: geom.shape,
+                        geometricMode: geom.key
+                      }));
+                    }}
+                    className={`w-full p-2.5 rounded-lg border text-left transition-all relative flex flex-col justify-center cursor-pointer ${
+                      isActive
+                        ? 'bg-cyan-500/15 border-cyan-400 text-cyan-200 shadow-[0_0_12px_rgba(34,211,238,0.25)]'
+                        : 'bg-slate-950/60 border-slate-850 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center w-full">
+                      <span className="font-sans font-bold text-[11px] leading-tight">
+                        {geom.name}
+                      </span>
+                      <span className={`font-mono text-[9px] px-1 py-0.5 rounded ${
+                        isActive ? 'bg-cyan-500/20 text-cyan-300' : 'bg-slate-900 text-slate-500'
+                      }`}>
+                        {isActive ? 'ACTIVE' : 'SELECT'}
+                      </span>
+                    </div>
+                    <div className="text-[9.5px] text-slate-500 mt-0.5 leading-none">
+                      {geom.thaiName} &bull; Plate: {geom.shape.toUpperCase()}
+                    </div>
+                  </button>
+                );
+              })}
             </div>
 
-            {/* Scale Visualization Details */}
-            <div className="border-t border-slate-850 pt-3">
-              <span className="text-[10px] font-mono text-slate-400 block mb-2 font-bold">การเรียงตัวของมวลสสารแต่ละสเกล (Scales):</span>
-              <div className="space-y-2 text-[10px] leading-relaxed text-slate-400">
-                <div className="bg-slate-950/40 p-1.5 rounded border border-slate-900">
-                  <strong className="text-cyan-400 font-mono">1. ไมโคร (Micro Scale):</strong> มวลอนุภาคละเอียดหรือเม็ดทรายขนาดจิ๋วสั่นและหนีออกจากแนวสะเทือน วิ่งเข้าไปอัดตัวกันอย่างหนาแน่นตรงเส้น Node
-                </div>
-                <div className="bg-slate-950/40 p-1.5 rounded border border-slate-900">
-                  <strong className="text-indigo-400 font-mono">2. เมโซ (Meso Scale):</strong> ก่อรูปแบบร่างตาข่ายวงกลมคริสตัลและแฉกดาวที่เรียงตัวเป็นแนวสมมาตรรัศมีอย่างสม่ำเสมอ
-                </div>
-                <div className="bg-slate-950/40 p-1.5 rounded border border-slate-900">
-                  <strong className="text-amber-400 font-mono">3. มาโคร (Macro Scale):</strong> การไหลวนของพลังงานบนจานวัสดุ (ทองเหลือง/เหล็ก) ที่ปรากฏภาพใหญ่เป็นรูปดาวเวทมนตร์สั่นพริ้วไหว
-                </div>
-                <div className="bg-slate-950/40 p-1.5 rounded border border-slate-900">
-                  <strong className="text-pink-400 font-mono">4. ควอนตัม (Quantum Scale):</strong> แผนภาพความหนาแน่นสูงสุดแสดงเสมือนสนามฟังก์ชันคลื่นความน่าจะเป็นที่ส่องสว่างสะท้อนระดับพลังงานกลย่อย
+            {/* Dynamic Alignment Explainer card */}
+            {state.geometricMode !== 'none' && (
+              <div className="border-t border-slate-850 pt-3 mt-1 animate-fade-in">
+                <span className="text-[10px] font-mono text-cyan-400 block mb-1.5 font-bold uppercase tracking-wider">
+                  🧪 การเปรียนรูปแบบของสสาร (Matter Alignment):
+                </span>
+                <div className="bg-slate-950/80 p-2.5 rounded-lg border border-cyan-900/30 text-[10px] leading-relaxed text-slate-300 space-y-1.5">
+                  {state.geometricMode === 'schumann' && (
+                    <>
+                      <p><strong>TH:</strong> สสารจัดเรียงตัวเป็นวงแหวนร่วมศูนย์กลางสมบูรณ์ พริ้วไหวเป็นระลอกคลื่นที่แผ่ขยาย มั่นคงดั่งชีพจรสั่นพ้องแม่เหล็กไฟฟ้าของโลก</p>
+                      <p className="text-slate-500 italic"><strong>EN:</strong> Organizes into perfect concentric circular ripple rings that oscillate gracefully like the Earth's electromagnetic heartbeat.</p>
+                    </>
+                  )}
+                  {state.geometricMode === 'star-5' && (
+                    <>
+                      <p><strong>TH:</strong> มวลสสารวิ่งหนีจากบริเวณที่สั่นไหวและเรียงตัวอย่างสมดุลเป็นดาว 5 แฉก มีแง่แหลมเด่นชัดและสลายตัวไปรอบทิศทางได้อย่างพอดี</p>
+                      <p className="text-slate-500 italic"><strong>EN:</strong> Particles drift away from high-vibe areas and settle neatly into a beautiful, sharp 5-pointed geometric starburst.</p>
+                    </>
+                  )}
+                  {state.geometricMode === 'flower-of-life' && (
+                    <>
+                      <p><strong>TH:</strong> ก่อตัวเป็นกลีบดอกไม้ประสานเกลียวซ้อนกลีบระนาบโค้งแบบธรรมชาติอย่างประณีต สะท้อนแบบแผนสากลของความกลมกลืนธรรมชาติและพลังงานคอสมิก</p>
+                      <p className="text-slate-500 italic"><strong>EN:</strong> Generates beautiful intersecting circular rosette petals where particles align in a perfectly balanced matrix representing universal flow.</p>
+                    </>
+                  )}
+                  {state.geometricMode === 'hexagonal-grid' && (
+                    <>
+                      <p><strong>TH:</strong> สสารจับกลุ่มเป็นรวงตาข่ายหกเหลี่ยมคริสตัลคล้ายโมเลกุลผลึกน้ำ แข็งแกร่งสม่ำเสมอ แผ่กระจายตัวสร้างระเบียบแถวอย่างสมบูรณ์แบบ</p>
+                      <p className="text-slate-500 italic"><strong>EN:</strong> Snaps into a highly stable and sharp honeycomb hexagonal crystalline lattice, showing how cells respond to the healing Solfeggio scale.</p>
+                    </>
+                  )}
+                  {state.geometricMode === 'star-6' && (
+                    <>
+                      <p><strong>TH:</strong> จัดระเบียบแถวเป็นดาวหกแฉกอันศักดิ์สิทธิ์หรือตราแห่งโซโลมอน และส่วนปลายแผ่กิ่งก้านเป็นสมมาตรผลึกน้ำแข็งหรือเกล็ดหิมะที่สมบูรณ์</p>
+                      <p className="text-slate-500 italic"><strong>EN:</strong> Aligns into a highly defined 6-pointed star or complex snowflake symmetry, with particles settling cleanly into calm nodal corridors.</p>
+                    </>
+                  )}
+                  {state.geometricMode === 'star-8' && (
+                    <>
+                      <p><strong>TH:</strong> สสารละเอียดเกาะกลุ่มเป็นลายสี่ทิศแปดด้านรัศมีพาดตัดไขว้กัน สร้างระนาบวงล้อพลังงานเล่นแร่แปรธาตุที่แผ่รัศมีความถี่คงที่รอบตัว</p>
+                      <p className="text-slate-500 italic"><strong>EN:</strong> Crystallizes into an intricate 8-pointed alchemical mandala, demonstrating extreme spatial geometric stabilization across high-frequency nodes.</p>
+                    </>
+                  )}
+                  {state.geometricMode === 'crown-chakra' && (
+                    <>
+                      <p><strong>TH:</strong> ก่อรูปแบบโครงตาข่ายระดับเศษส่วน (Fractals) ซับซ้อนนับพันกลีบ กระตุ้นพลังงานรอบตัวให้ส่องแสงเรืองรองดั่งจักระมงกุฎเชื่อมโยงจิตวิญญาณ</p>
+                      <p className="text-slate-500 italic"><strong>EN:</strong> Particles condense into fine, highly dense fractal lines resembling a thousand-petal lotus structure, forming a complex holographic network.</p>
+                    </>
+                  )}
                 </div>
               </div>
-            </div>
+            )}
 
           </div>
         </div>

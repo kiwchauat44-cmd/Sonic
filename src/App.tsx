@@ -32,7 +32,8 @@ export default function App() {
     plateMaterial: 'brass',
     micActive: false,
     colorPalette: 'neon',
-    pulseAnimation: true
+    pulseAnimation: true,
+    geometricMode: 'none'
   });
 
   // Number of parallel displays (1, 2, or 4 comparison blocks)

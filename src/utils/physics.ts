@@ -28,14 +28,47 @@ export function getStandingWaveDisplacement(
   const k = Math.sqrt(f) * 0.45 * (3400 / mat.speedOfSound);
 
   // 1. SACRED GEOMETRY / EUROPEAN MAGIC STAR PRESETS OVERRIDES
+  const isSchumann = Math.abs(f - 7.83) < 1;
   const isPentagram = Math.abs(f - 340) < 5;
+  const isFlowerOfLife = Math.abs(f - 432) < 5;
+  const isHexagonalGrid = Math.abs(f - 528) < 5;
   const isHexagram = Math.abs(f - 612) < 5;
   const isOctagram = Math.abs(f - 880) < 5;
+  const isCrownChakra = Math.abs(f - 963) < 5;
 
   if (shape === 'circle') {
     const r = Math.sqrt(x * x + y * y);
     const theta = Math.atan2(y, x);
     if (r > 1) return 0;
+
+    if (isSchumann) {
+      // Concentric circular waves matching Schumann Resonance
+      return Math.cos(4 * Math.PI * r);
+    }
+    
+    if (isFlowerOfLife) {
+      // Flower of Life layout: concentric rings + 6-fold intersecting rosettes
+      const radialWave = Math.cos(3 * Math.PI * r) + 0.4 * Math.sin(6 * Math.PI * r);
+      const angularWave = Math.cos(6 * theta);
+      return 0.7 * radialWave * angularWave + 0.3 * Math.cos(2 * Math.PI * r);
+    }
+
+    if (isHexagonalGrid) {
+      // Hexagonal honeycomb lattice: 3 waves at 120-degree angles
+      let sum = 0;
+      for (let i = 0; i < 3; i++) {
+        const angle = theta + (i * Math.PI) / 3;
+        sum += Math.cos(4 * Math.PI * r * Math.cos(angle));
+      }
+      return sum / 3;
+    }
+
+    if (isCrownChakra) {
+      // Intricate 12-fold circular star fractal
+      const radialWave = Math.cos(6 * Math.PI * r);
+      const angularWave = Math.cos(12 * theta);
+      return radialWave * angularWave;
+    }
 
     // Bessel approximation: cos(k * r) modulated by angular symmetry
     let modeAngular = Math.round(Math.sqrt(f) * 0.15) + 1;
@@ -57,6 +90,44 @@ export function getStandingWaveDisplacement(
     
     return radialWave * angularWave;
   } else {
+    if (isSchumann) {
+      // Soft ripple concentric rings on a square
+      return 0.5 * (Math.cos(2 * Math.PI * x) + Math.cos(2 * Math.PI * y));
+    }
+
+    if (isFlowerOfLife) {
+      // 6-fold rosette superposition on square
+      let sum = 0;
+      for (let i = 0; i < 3; i++) {
+        const angle = (i * Math.PI) / 3;
+        const proj = x * Math.cos(angle) + y * Math.sin(angle);
+        sum += Math.cos(4 * Math.PI * proj);
+      }
+      return sum / 3;
+    }
+
+    if (isHexagonalGrid) {
+      // Hexagonal crystalline lattice
+      let sum = 0;
+      for (let i = 0; i < 3; i++) {
+        const angle = (i * Math.PI) / 3;
+        const proj = x * Math.cos(angle) + y * Math.sin(angle);
+        sum += Math.cos(5 * Math.PI * proj);
+      }
+      return sum / 3;
+    }
+
+    if (isCrownChakra) {
+      // 12-fold high complexity mandala
+      let sum = 0;
+      for (let i = 0; i < 6; i++) {
+        const angle = (i * Math.PI) / 6;
+        const proj = x * Math.cos(angle) + y * Math.sin(angle);
+        sum += Math.cos(7 * Math.PI * proj);
+      }
+      return sum / 6;
+    }
+
     // Square plate standing waves using classic Chladni superposition:
     // W = cos(n * pi * x) * cos(m * pi * y) - cos(m * pi * x) * cos(n * pi * y)
     if (isPentagram) {

@@ -34,6 +34,7 @@ export interface SimulationState {
   micActive: boolean;
   colorPalette: 'neon' | 'monochrome' | 'heatmap' | 'nature';
   pulseAnimation: boolean;
+  geometricMode: string;   // 'none' | 'schumann' | 'star-5' | 'flower-of-life' | 'hexagonal-grid' | 'star-6' | 'star-8' | 'crown-chakra'
 }
 
 export interface Particle {
