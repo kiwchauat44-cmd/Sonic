@@ -32,6 +32,8 @@ export interface SimulationState {
   noiseLevel: number;      // 0 - 10 (random micro disturbance)
   plateMaterial: string;   // 'brass' | 'steel' | 'glass' | 'acrylic'
   micActive: boolean;
+  colorPalette: 'neon' | 'monochrome' | 'heatmap' | 'nature';
+  pulseAnimation: boolean;
 }
 
 export interface Particle {

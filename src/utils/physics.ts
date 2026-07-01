@@ -27,21 +27,56 @@ export function getStandingWaveDisplacement(
   // Wavenumber k proportional to sqrt of frequency and speed of sound
   const k = Math.sqrt(f) * 0.45 * (3400 / mat.speedOfSound);
 
+  // 1. SACRED GEOMETRY / EUROPEAN MAGIC STAR PRESETS OVERRIDES
+  const isPentagram = Math.abs(f - 340) < 5;
+  const isHexagram = Math.abs(f - 612) < 5;
+  const isOctagram = Math.abs(f - 880) < 5;
+
   if (shape === 'circle') {
     const r = Math.sqrt(x * x + y * y);
     const theta = Math.atan2(y, x);
     if (r > 1) return 0;
 
     // Bessel approximation: cos(k * r) modulated by angular symmetry
-    // Standard circular drum modes
-    const modeAngular = Math.round(Math.sqrt(f) * 0.15) + 1;
-    const radialWave = Math.cos(k * Math.PI * r);
+    let modeAngular = Math.round(Math.sqrt(f) * 0.15) + 1;
+    let radialMultiplier = 1;
+
+    if (isPentagram) {
+      modeAngular = 5; // Perfect 5-pointed Magic Star (Pentagram)
+      radialMultiplier = 1.2;
+    } else if (isHexagram) {
+      modeAngular = 6; // Perfect 6-pointed Star of David (Hexagram)
+      radialMultiplier = 1.35;
+    } else if (isOctagram) {
+      modeAngular = 8; // Intricate 8-pointed Alchemical Octagram Mandala
+      radialMultiplier = 1.5;
+    }
+
+    const radialWave = Math.cos(k * Math.PI * r * radialMultiplier);
     const angularWave = Math.cos(modeAngular * theta);
     
     return radialWave * angularWave;
   } else {
-    // Square plate standing waves (combination of cosine/sine modes based on frequency)
-    // To make it continuous and organic, we superimpose plane waves reflecting off the boundaries
+    // Square plate standing waves using classic Chladni superposition:
+    // W = cos(n * pi * x) * cos(m * pi * y) - cos(m * pi * x) * cos(n * pi * y)
+    if (isPentagram) {
+      // 5-pointed magic configuration on square plate (5, 2 mode)
+      const n = 5;
+      const m = 2;
+      return 0.5 * (Math.cos(n * Math.PI * x) * Math.cos(m * Math.PI * y) - Math.cos(m * Math.PI * x) * Math.cos(n * Math.PI * y));
+    } else if (isHexagram) {
+      // 6-pointed hexagonal seal configuration on square plate (6, 4 mode)
+      const n = 6;
+      const m = 4;
+      return 0.5 * (Math.cos(n * Math.PI * x) * Math.cos(m * Math.PI * y) - Math.cos(m * Math.PI * x) * Math.cos(n * Math.PI * y));
+    } else if (isOctagram) {
+      // 8-pointed mandala configuration on square plate (8, 6 mode)
+      const n = 8;
+      const m = 6;
+      return 0.5 * (Math.cos(n * Math.PI * x) * Math.cos(m * Math.PI * y) - Math.cos(m * Math.PI * x) * Math.cos(n * Math.PI * y));
+    }
+
+    // Default square plate standing waves (plane wave superposition)
     const numDirections = 4;
     let sum = 0;
     

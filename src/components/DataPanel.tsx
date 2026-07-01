@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
 import { SimulationState, PatternAnalysisMetrics } from '../types';
 import { BarChart, Percent, Activity, Share2, Save, Play, Square, Camera, ArrowDownToLine, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -193,13 +194,24 @@ export const DataPanel: React.FC<DataPanelProps> = ({
     }
   };
 
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <div 
-      className={`fixed lg:relative right-0 top-0 h-full flex flex-row transition-all duration-300 z-40 lg:z-30 ${
-        isCollapsed 
-          ? 'translate-x-full lg:translate-x-0 lg:w-0 lg:overflow-hidden' 
-          : 'translate-x-0 w-[290px] sm:w-80'
-      }`}
+    <motion.div 
+      className="fixed lg:relative right-0 top-0 h-full flex flex-row z-40 lg:z-30"
+      initial={false}
+      animate={{
+        x: isCollapsed ? (isMobile ? 320 : 0) : 0,
+        width: isCollapsed ? (isMobile ? 0 : 0) : (isMobile ? 290 : 320),
+      }}
+      transition={{ type: 'spring', stiffness: 240, damping: 26 }}
     >
       {/* Collapse Handle Button */}
       <button
@@ -427,6 +439,6 @@ export const DataPanel: React.FC<DataPanelProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

@@ -4,8 +4,9 @@
  */
 
 import React from 'react';
+import { motion } from 'motion/react';
 import { SimulationState, MatterType } from '../types';
-import { Play, Pause, RotateCcw, Compass, Flame, ArrowUpRight, Grid, LayoutList, LayoutGrid, ChevronDown, ChevronUp, Users } from 'lucide-react';
+import { Play, Pause, RotateCcw, Compass, Flame, ArrowUpRight, Grid, LayoutList, LayoutGrid, ChevronDown, ChevronUp, Users, Activity } from 'lucide-react';
 
 interface PlaybackTimelineProps {
   state: SimulationState;
@@ -68,10 +69,15 @@ export const PlaybackTimeline: React.FC<PlaybackTimelineProps> = ({
   };
 
   return (
-    <div 
-      className={`relative w-full transition-all duration-300 z-20 ${
-        isCollapsed ? 'h-0 overflow-hidden' : 'h-auto lg:h-36'
-      }`}
+    <motion.div 
+      className="relative w-full z-20"
+      initial={false}
+      animate={{
+        height: isCollapsed ? 0 : 'auto',
+        opacity: isCollapsed ? 0 : 1
+      }}
+      transition={{ type: 'spring', stiffness: 220, damping: 25 }}
+      style={{ overflow: isCollapsed ? 'hidden' : 'visible' }}
     >
       {/* Collapse Handle Button */}
       <button
@@ -262,11 +268,24 @@ export const PlaybackTimeline: React.FC<PlaybackTimelineProps> = ({
                 <ArrowUpRight className="w-4 h-4" />
                 VECTOR
               </button>
+
+              <button
+                onClick={() => setState(prev => ({ ...prev, pulseAnimation: !prev.pulseAnimation }))}
+                className={`p-2 rounded-lg border text-xs font-mono flex items-center gap-1.5 transition-all cursor-pointer ${
+                  state.pulseAnimation
+                    ? 'bg-pink-500/10 border-pink-500 text-pink-300'
+                    : 'bg-slate-900 border-slate-950 text-slate-500 hover:text-slate-300'
+                }`}
+                title="Toggle Pulse/Breathing Animation (จำลองสั่นชีพจรตามแอมพลิจูด)"
+              >
+                <Activity className="w-4 h-4" />
+                PULSE
+              </button>
             </div>
           </div>
 
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

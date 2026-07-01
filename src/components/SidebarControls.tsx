@@ -4,8 +4,9 @@
  */
 
 import React from 'react';
+import { motion } from 'motion/react';
 import { SimulationState, PresetFrequency, WaveformType, MatterType, SimulationLevel } from '../types';
-import { Sliders, Volume2, VolumeX, Music, Mic, Layers, Anchor, Circle, Square as SquareIcon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Sliders, Volume2, VolumeX, Music, Mic, Layers, Anchor, Circle, Square as SquareIcon, ChevronLeft, ChevronRight, Palette } from 'lucide-react';
 
 export const FREQUENCY_PRESETS: PresetFrequency[] = [
   {
@@ -16,11 +17,11 @@ export const FREQUENCY_PRESETS: PresetFrequency[] = [
     thaiDescription: 'การสั่นพ้องแม่เหล็กไฟฟ้าของโลก สภาวะการสั่นสะเทือนระดับลึกสูงสุด'
   },
   {
-    frequency: 110,
-    name: 'A2 Resonance',
-    thaiName: 'โน้ตลา (A2)',
-    description: 'Perfect modal symmetry on classical metal plates.',
-    thaiDescription: 'สมมาตรโหมดแบบสมบูรณ์บนแผ่นโลหะแบบคลาสสิก'
+    frequency: 340,
+    name: 'Mage Pentagram (ดาว 5 แฉก)',
+    thaiName: 'ดาวห้าแฉกแห่งเวทมนตร์',
+    description: 'Forms a perfect 5-pointed magic star starburst of European geometry.',
+    thaiDescription: 'สร้างรูปทรงดาว 5 แฉก เรขาคณิตเวทมนตร์ยุโรปโบราณที่สมมาตรอย่างน่าอัศจรรย์'
   },
   {
     frequency: 432,
@@ -35,6 +36,20 @@ export const FREQUENCY_PRESETS: PresetFrequency[] = [
     thaiName: 'ความถี่ 528Hz (ซ่อมแซม DNA)',
     description: 'Miracle frequency of Solfeggio. Forms sharp hexagonal ring structures.',
     thaiDescription: 'ความถี่มหัศจรรย์โซลเฟจจิโอ ก่อรูปแบบหกเหลี่ยมคริสตัล'
+  },
+  {
+    frequency: 612,
+    name: 'Solomon Hexagram (ดาว 6 แฉก)',
+    thaiName: 'ตราหกแฉกแห่งโซโลมอน',
+    description: 'Forms a pristine 6-pointed star / Star of David or snowflake.',
+    thaiDescription: 'สร้างตราดาว 6 แฉกโบราณ (Hexagram) หรือลวดลายผลึกหิมะที่งดงามและสมบูรณ์'
+  },
+  {
+    frequency: 880,
+    name: 'Alchemical Octagram (8 แฉก)',
+    thaiName: 'ตราแปดแฉกเล่นแร่แปรธาตุ',
+    description: 'Intricate 8-pointed star burst mandala of sacred geometry.',
+    thaiDescription: 'สร้างมณฑลศักดิ์สิทธิ์แบบดาว 8 แฉกที่ซับซ้อนตามลวดลายเล่นแร่แปรธาตุโบราณ'
   },
   {
     frequency: 963,
@@ -96,13 +111,24 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
     setState(prev => ({ ...prev, level }));
   };
 
+  const [isMobile, setIsMobile] = React.useState(typeof window !== 'undefined' ? window.innerWidth < 1024 : false);
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
-    <div 
-      className={`fixed lg:relative left-0 top-0 h-full flex flex-row transition-all duration-300 z-40 lg:z-30 ${
-        isCollapsed 
-          ? '-translate-x-full lg:translate-x-0 lg:w-0 lg:overflow-hidden' 
-          : 'translate-x-0 w-[290px] sm:w-80'
-      }`}
+    <motion.div 
+      className="fixed lg:relative left-0 top-0 h-full flex flex-row z-40 lg:z-30"
+      initial={false}
+      animate={{
+        x: isCollapsed ? (isMobile ? -320 : 0) : 0,
+        width: isCollapsed ? (isMobile ? 0 : 0) : (isMobile ? 290 : 320),
+      }}
+      transition={{ type: 'spring', stiffness: 240, damping: 26 }}
     >
       {/* Content Panel */}
       <div className="w-[290px] sm:w-80 h-full bg-slate-950/90 backdrop-blur-xl border-r border-slate-900 flex flex-col overflow-y-auto overflow-x-hidden p-4 sm:p-5 text-slate-200 shadow-2xl">
@@ -116,7 +142,7 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
         {/* 1. FREQUENCY SLIDER */}
         <div className="mb-6 bg-slate-900/40 p-4 rounded-xl border border-slate-900">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-mono text-slate-400">FREQUENCY (ความถี่)</span>
+            <span className="text-xs font-mono text-slate-400">FREQUENCY (ปรับความถี่เสียง)</span>
             <span className="text-lg font-mono font-bold text-cyan-400">
               {state.frequency.toFixed(1)} <span className="text-xs">Hz</span>
             </span>
@@ -124,16 +150,16 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
           <input
             type="range"
             min="1"
-            max="1200"
+            max="1500"
             step="0.1"
             value={state.frequency}
             onChange={(e) => handleFreqChange(parseFloat(e.target.value))}
             className="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-cyan-400"
           />
           <div className="flex justify-between text-[10px] text-slate-500 font-mono mt-1">
-            <span>1 Hz</span>
-            <span>600 Hz</span>
-            <span>1200 Hz</span>
+            <span>0 Hz</span>
+            <span>750 Hz</span>
+            <span>1500 Hz (สูงสุด)</span>
           </div>
         </div>
 
@@ -195,6 +221,37 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
                 }`}
               >
                 {wave}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 4.5 COLOR PALETTE SWITCHER (เลือกธีมสี) */}
+        <div className="mb-6 border-t border-slate-900 pt-5">
+          <div className="flex items-center gap-2 mb-3">
+            <Palette className="w-4 h-4 text-cyan-400" />
+            <span className="text-xs font-mono text-slate-400 uppercase tracking-wider">Color Theme Palette</span>
+          </div>
+          <div className="grid grid-cols-2 gap-2">
+            {[
+              { id: 'neon', label: 'Neon Glow (เรืองแสง)', desc: 'Vibrant neon colors', color: 'from-pink-500 to-cyan-500' },
+              { id: 'monochrome', label: 'Monochrome (ขาวดำ)', desc: 'Elegant silver & white', color: 'from-slate-400 to-white' },
+              { id: 'heatmap', label: 'Heatmap (แผนที่ความร้อน)', desc: 'Thermal wave density', color: 'from-blue-600 via-red-500 to-yellow-400' },
+              { id: 'nature', label: 'Nature (ธรรมชาติ)', desc: 'Forest, teal & warm gold', color: 'from-emerald-500 to-amber-500' }
+            ].map((pal) => (
+              <button
+                key={pal.id}
+                onClick={() => setState(prev => ({ ...prev, colorPalette: pal.id as any }))}
+                className={`p-2 rounded-lg border text-left transition-all relative overflow-hidden group cursor-pointer ${
+                  state.colorPalette === pal.id
+                    ? 'bg-slate-900 border-cyan-500 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.15)]'
+                    : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`}
+              >
+                {/* Visual indicator bar */}
+                <div className={`h-1 w-full rounded bg-gradient-to-r ${pal.color} mb-1.5`} />
+                <div className="text-[10px] font-sans font-bold leading-tight">{pal.label}</div>
+                <div className="text-[8.5px] font-mono text-slate-500 leading-none mt-0.5">{pal.desc}</div>
               </button>
             ))}
           </div>
@@ -303,7 +360,7 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
           </div>
 
           {/* Noise level slider */}
-          <div className="bg-slate-900/30 p-3 rounded-lg border border-slate-900/60">
+          <div className="bg-slate-900/30 p-3 rounded-lg border border-slate-900/60 mb-3">
             <div className="flex justify-between items-center mb-1 text-[11px] font-mono">
               <span className="text-slate-400">NOISE DISTURBANCE (คลื่นรบกวน)</span>
               <span className="text-amber-500 font-bold">{state.noiseLevel.toFixed(1)}</span>
@@ -317,6 +374,129 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
               onChange={(e) => setState(prev => ({ ...prev, noiseLevel: parseFloat(e.target.value) }))}
               className="w-full h-1 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-amber-500"
             />
+          </div>
+
+          {/* Pulse Animation Toggle */}
+          <div className="bg-slate-900/30 p-3 rounded-lg border border-slate-900/60 flex items-center justify-between">
+            <div className="flex flex-col">
+              <span className="text-[11px] font-mono text-slate-300 font-semibold">PULSE ANIMATION</span>
+              <span className="text-[9px] text-slate-500 leading-none mt-0.5">เต้นกระพริบตามแอมพลิจูดเสียง</span>
+            </div>
+            <button
+              onClick={() => setState(prev => ({ ...prev, pulseAnimation: !prev.pulseAnimation }))}
+              className={`px-3 py-1.5 rounded-lg border text-xs font-mono transition-all cursor-pointer ${
+                state.pulseAnimation
+                  ? 'bg-pink-500/10 border-pink-500 text-pink-400 font-bold'
+                  : 'bg-slate-950/40 border-slate-800 text-slate-500 hover:text-slate-300'
+              }`}
+            >
+              {state.pulseAnimation ? 'ON' : 'OFF'}
+            </button>
+          </div>
+        </div>
+
+        {/* 6.8 SACRED GEOMETRY EXPERIMENT DECK (ระบบจำลองเรขาคณิตศักดิ์สิทธิ์และสนามพลังงาน) */}
+        <div className="mb-6 border-t border-slate-900 pt-5">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-sm">🔮</span>
+            <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider font-bold">แท่นจำลองเรขาคณิตศักดิ์สิทธิ์</span>
+          </div>
+
+          <div className="bg-slate-900/50 p-4 rounded-xl border border-slate-850 space-y-3.5">
+            <div className="text-[11px] text-slate-300 leading-relaxed">
+              สสารและของเหลวจะปรับเปลี่ยนรูปทรงสมมาตรโดยตรงตามการกระตุ้นของคลื่นเสียงความถี่เฉพาะตัว ก่อเกิดเป็นพลังงานตามแบบแผนคลาสสิกของยุโรปโบราณ
+            </div>
+
+            {/* Geometry Selectors */}
+            <div className="space-y-2">
+              <span className="text-[10px] font-mono text-slate-500 block">คลิกจูนคลื่นพลังงานด่วน:</span>
+              
+              <button
+                onClick={() => {
+                  handleFreqChange(340);
+                  setState(prev => ({ ...prev, amplitude: 75, shape: 'circle' }));
+                }}
+                className={`w-full p-2.5 rounded-lg border text-left transition-all relative flex flex-col justify-center cursor-pointer ${
+                  Math.abs(state.frequency - 340) < 1
+                    ? 'bg-cyan-500/10 border-cyan-500 text-cyan-300 shadow-[0_0_12px_rgba(34,211,238,0.2)]'
+                    : 'bg-slate-950/60 border-slate-850 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`}
+              >
+                <div className="flex justify-between items-center w-full">
+                  <span className="font-sans font-bold text-xs flex items-center gap-1">
+                    🌟 ตราดาว 5 แฉก (Pentagram)
+                  </span>
+                  <span className="font-mono text-[11px] text-cyan-400 font-bold">340 Hz</span>
+                </div>
+                <div className="text-[9.5px] text-slate-500 mt-1 leading-normal">
+                  สมมาตรมนตร์ตราฝั่งตะวันตก ดึงสสารและแร่ธาตุเข้าสู่จุดร่วมเรขาคณิต 5 จุดศูนย์กลาง
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  handleFreqChange(612);
+                  setState(prev => ({ ...prev, amplitude: 80, shape: 'square' }));
+                }}
+                className={`w-full p-2.5 rounded-lg border text-left transition-all relative flex flex-col justify-center cursor-pointer ${
+                  Math.abs(state.frequency - 612) < 1
+                    ? 'bg-pink-500/10 border-pink-500 text-pink-300 shadow-[0_0_12px_rgba(236,72,153,0.2)]'
+                    : 'bg-slate-950/60 border-slate-850 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`}
+              >
+                <div className="flex justify-between items-center w-full">
+                  <span className="font-sans font-bold text-xs flex items-center gap-1">
+                    ✡️ ตราดาว 6 แฉก (Hexagram)
+                  </span>
+                  <span className="font-mono text-[11px] text-pink-400 font-bold">612 Hz</span>
+                </div>
+                <div className="text-[9.5px] text-slate-500 mt-1 leading-normal">
+                  สัญลักษณ์ความสมดุลคู่ตรงข้าม (ตราแห่งโซโลมอน) เกิดรูปแบบคริสตัลผลึกหิมะที่งดงาม
+                </div>
+              </button>
+
+              <button
+                onClick={() => {
+                  handleFreqChange(880);
+                  setState(prev => ({ ...prev, amplitude: 85, shape: 'circle' }));
+                }}
+                className={`w-full p-2.5 rounded-lg border text-left transition-all relative flex flex-col justify-center cursor-pointer ${
+                  Math.abs(state.frequency - 880) < 1
+                    ? 'bg-amber-500/10 border-amber-500 text-amber-300 shadow-[0_0_12px_rgba(245,158,11,0.2)]'
+                    : 'bg-slate-950/60 border-slate-850 text-slate-400 hover:border-slate-700 hover:text-slate-200'
+                }`}
+              >
+                <div className="flex justify-between items-center w-full">
+                  <span className="font-sans font-bold text-xs flex items-center gap-1">
+                    ☸️ ตราดารารัศมี 8 แฉก (Octagram)
+                  </span>
+                  <span className="font-mono text-[11px] text-amber-400 font-bold">880 Hz</span>
+                </div>
+                <div className="text-[9.5px] text-slate-500 mt-1 leading-normal">
+                  เรขาคณิตศักดิ์สิทธิ์เชิงอภิปรัชญา การเรียงตัวสลับซับซ้อนสี่ทิศแปดด้านระนาบพลังงานสูง
+                </div>
+              </button>
+            </div>
+
+            {/* Scale Visualization Details */}
+            <div className="border-t border-slate-850 pt-3">
+              <span className="text-[10px] font-mono text-slate-400 block mb-2 font-bold">การเรียงตัวของมวลสสารแต่ละสเกล (Scales):</span>
+              <div className="space-y-2 text-[10px] leading-relaxed text-slate-400">
+                <div className="bg-slate-950/40 p-1.5 rounded border border-slate-900">
+                  <strong className="text-cyan-400 font-mono">1. ไมโคร (Micro Scale):</strong> มวลอนุภาคละเอียดหรือเม็ดทรายขนาดจิ๋วสั่นและหนีออกจากแนวสะเทือน วิ่งเข้าไปอัดตัวกันอย่างหนาแน่นตรงเส้น Node
+                </div>
+                <div className="bg-slate-950/40 p-1.5 rounded border border-slate-900">
+                  <strong className="text-indigo-400 font-mono">2. เมโซ (Meso Scale):</strong> ก่อรูปแบบร่างตาข่ายวงกลมคริสตัลและแฉกดาวที่เรียงตัวเป็นแนวสมมาตรรัศมีอย่างสม่ำเสมอ
+                </div>
+                <div className="bg-slate-950/40 p-1.5 rounded border border-slate-900">
+                  <strong className="text-amber-400 font-mono">3. มาโคร (Macro Scale):</strong> การไหลวนของพลังงานบนจานวัสดุ (ทองเหลือง/เหล็ก) ที่ปรากฏภาพใหญ่เป็นรูปดาวเวทมนตร์สั่นพริ้วไหว
+                </div>
+                <div className="bg-slate-950/40 p-1.5 rounded border border-slate-900">
+                  <strong className="text-pink-400 font-mono">4. ควอนตัม (Quantum Scale):</strong> แผนภาพความหนาแน่นสูงสุดแสดงเสมือนสนามฟังก์ชันคลื่นความน่าจะเป็นที่ส่องสว่างสะท้อนระดับพลังงานกลย่อย
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -370,6 +550,6 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
           <ChevronLeft className="w-4 h-4 group-hover:scale-125 transition-transform" />
         )}
       </button>
-    </div>
+    </motion.div>
   );
 };

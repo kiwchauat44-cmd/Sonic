@@ -163,9 +163,51 @@ export const CymaticsCanvas: React.FC<CymaticsCanvasProps> = ({
     }
   };
 
-  // Map wave energy levels to custom gradient hues
-  const getParticleColor = (energy: number, matterType: MatterType, life: number = 100) => {
+  // Map wave energy levels to custom gradient hues based on selected theme palette
+  const getParticleColor = (
+    energy: number, 
+    matterType: MatterType, 
+    life: number = 100, 
+    palette: 'neon' | 'monochrome' | 'heatmap' | 'nature' = 'neon'
+  ) => {
     const norm = Math.max(0, Math.min(1, energy));
+
+    if (palette === 'monochrome') {
+      // Elegant silver, gray, and glowing pure white
+      const l = 30 + norm * 70; // 30% to 100% brightness
+      const alpha = 0.35 + norm * 0.6;
+      return `hsla(0, 0%, ${l}%, ${alpha * (life / 100)})`;
+    }
+
+    if (palette === 'heatmap') {
+      // Classic thermal spectrum: deep blue/violet (low energy) -> magenta/red -> orange/yellow -> white-hot (high energy)
+      const h = (240 - norm * 240 + 360) % 360; 
+      const s = 100;
+      const l = 35 + norm * 55;
+      return `hsla(${h}, ${s}%, ${l}%, ${0.5 + norm * 0.45})`;
+    }
+
+    if (palette === 'nature') {
+      // Forest/Ocean/Earth tones: emerald green, teal, deep brown, warm gold/sunlight
+      if (matterType === 'sand') {
+        const h = 32 + norm * 22; // Sandy golden brown to vibrant gold
+        const s = 50 + norm * 45;
+        const l = 42 + norm * 35;
+        return `hsla(${h}, ${s}%, ${l}%, 0.85)`;
+      } else if (matterType === 'water') {
+        const h = 145 + norm * 45; // Deep lush green to vibrant water teal/blue
+        const s = 65 + norm * 30;
+        const l = 30 + norm * 40;
+        return `hsla(${h}, ${s}%, ${l}%, 0.8)`;
+      } else {
+        const h = 85 + norm * 50; // Earthy moss green to bright chartreuse
+        const s = 55 + norm * 40;
+        const l = 35 + norm * 40;
+        return `hsla(${h}, ${s}%, ${l}%, ${0.5 + norm * 0.4})`;
+      }
+    }
+
+    // Default 'neon': High-contrast vibrant original tones
     if (matterType === 'sand') {
       // Beige low-vibe nodes to glowing orange-red antinodes
       const h = 33 + norm * 45; 
@@ -469,6 +511,10 @@ export const CymaticsCanvas: React.FC<CymaticsCanvasProps> = ({
       }
 
       // 7. DRAW PARTICLES
+      const pulseAmt = state.pulseAnimation ? (state.amplitude / 100) : 0;
+      const radialBreath = 1 + Math.sin(timeRef.current * 12) * pulseAmt * 0.012;
+      const sizePulse = 1 + Math.sin(timeRef.current * 12) * pulseAmt * 0.25;
+
       const projectedParticles = particlesRef.current
         .map(p => {
           let waveZ = p.z;
@@ -482,7 +528,9 @@ export const CymaticsCanvas: React.FC<CymaticsCanvasProps> = ({
             waveZ = Math.max(0, p.z) * (state.amplitude / 100);
           }
 
-          const proj = project(p.x, p.y, waveZ);
+          const px = state.pulseAnimation ? p.x * radialBreath : p.x;
+          const py = state.pulseAnimation ? p.y * radialBreath : p.y;
+          const proj = project(px, py, waveZ);
           return { p, proj };
         })
         .filter(item => item.proj.visible);
@@ -492,10 +540,11 @@ export const CymaticsCanvas: React.FC<CymaticsCanvasProps> = ({
       }
 
       projectedParticles.forEach(({ p, proj }) => {
-        const energyColor = getParticleColor(p.energy, state.matterType, p.life);
+        const energyColor = getParticleColor(p.energy, state.matterType, p.life, state.colorPalette);
         ctx.fillStyle = energyColor;
         
         let pSize = p.size;
+        if (state.pulseAnimation) pSize *= sizePulse;
         if (state.level === 'micro') pSize *= 0.8;
         if (state.level === 'quantum') pSize *= 1.3;
 
