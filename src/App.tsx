@@ -11,7 +11,7 @@ import { DataPanel } from './components/DataPanel';
 import { PlaybackTimeline } from './components/PlaybackTimeline';
 import { EducationalModal } from './components/EducationalModal';
 import { cymaticAudio } from './utils/audio';
-import { GraduationCap, Eye, EyeOff, Volume2, VolumeX, Sparkles, AlertCircle, HelpCircle } from 'lucide-react';
+import { GraduationCap, Eye, EyeOff, Volume2, VolumeX, Sparkles, AlertCircle, HelpCircle, Sliders, BarChart, Activity, Compass, Circle, Square as SquareIcon, Play, Pause } from 'lucide-react';
 
 export default function App() {
   // Global Simulation State
@@ -47,11 +47,19 @@ export default function App() {
     resonanceMatching: 75
   });
 
-  // UI Collapsed Panels
-  const [isLeftCollapsed, setIsLeftCollapsed] = useState<boolean>(false);
-  const [isRightCollapsed, setIsRightCollapsed] = useState<boolean>(false);
-  const [isBottomCollapsed, setIsBottomCollapsed] = useState<boolean>(false);
-  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState<boolean>(false);
+  // UI Collapsed Panels - automatically collapsed on smaller mobile viewports for clean, unblocked initial preview
+  const [isLeftCollapsed, setIsLeftCollapsed] = useState<boolean>(() => {
+    return typeof window !== 'undefined' ? window.innerWidth < 1024 : false;
+  });
+  const [isRightCollapsed, setIsRightCollapsed] = useState<boolean>(() => {
+    return typeof window !== 'undefined' ? window.innerWidth < 1024 : false;
+  });
+  const [isBottomCollapsed, setIsBottomCollapsed] = useState<boolean>(() => {
+    return typeof window !== 'undefined' ? window.innerWidth < 1024 : false;
+  });
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState<boolean>(() => {
+    return typeof window !== 'undefined' ? window.innerWidth < 1024 : false;
+  });
   
   // Audio synth Muted
   const [isMuted, setIsMuted] = useState<boolean>(true);
@@ -328,6 +336,112 @@ export default function App() {
               <span>REVEAL CONTROLS (แสดงปุ่มควบคุม)</span>
             </button>
           )}
+
+          {/* FLOATING MOBILE-FRIENDLY HUD CONTROL PANEL */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 bg-slate-950/95 backdrop-blur-md px-3 py-2 rounded-xl border border-slate-850 flex items-center gap-1.5 shadow-2xl transition-all max-w-[95%] overflow-x-auto no-scrollbar lg:hidden">
+            
+            {/* 1. Left Sidebar (Controls) */}
+            <button
+              onClick={() => setIsLeftCollapsed(!isLeftCollapsed)}
+              className={`p-2 rounded-lg flex flex-col items-center justify-center gap-0.5 min-w-[54px] h-12 transition-all cursor-pointer ${
+                !isLeftCollapsed 
+                  ? 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-300' 
+                  : 'bg-slate-900/60 border border-slate-850 text-slate-400'
+              }`}
+              title="Toggle Sound Controls"
+            >
+              <Sliders className="w-4 h-4" />
+              <span className="text-[7.5px] font-mono leading-none tracking-tight">FREQ</span>
+            </button>
+
+            {/* 2. Right Sidebar (Science) */}
+            <button
+              onClick={() => setIsRightCollapsed(!isRightCollapsed)}
+              className={`p-2 rounded-lg flex flex-col items-center justify-center gap-0.5 min-w-[54px] h-12 transition-all cursor-pointer ${
+                !isRightCollapsed 
+                  ? 'bg-indigo-500/15 border border-indigo-500/30 text-indigo-300' 
+                  : 'bg-slate-900/60 border border-slate-850 text-slate-400'
+              }`}
+              title="Toggle Scientific Diagnostics"
+            >
+              <BarChart className="w-4 h-4" />
+              <span className="text-[7.5px] font-mono leading-none tracking-tight">STATS</span>
+            </button>
+
+            {/* 3. Bottom Timeline Toggle */}
+            <button
+              onClick={() => setIsBottomCollapsed(!isBottomCollapsed)}
+              className={`p-2 rounded-lg flex flex-col items-center justify-center gap-0.5 min-w-[54px] h-12 transition-all cursor-pointer ${
+                !isBottomCollapsed 
+                  ? 'bg-amber-500/15 border border-amber-500/30 text-amber-300' 
+                  : 'bg-slate-900/60 border border-slate-850 text-slate-400'
+              }`}
+              title="Toggle Playback Timeline"
+            >
+              <Activity className="w-4 h-4" />
+              <span className="text-[7.5px] font-mono leading-none tracking-tight">TIMELINE</span>
+            </button>
+
+            {/* Divider */}
+            <div className="w-px h-8 bg-slate-800 self-center mx-0.5" />
+
+            {/* 4. Shape Quick-Switch (กรอบ 4 เหลี่ยม / วงกลม) */}
+            <button
+              onClick={() => setState(prev => ({ ...prev, shape: (prev as any).shape === 'circle' ? 'square' : 'circle' }))}
+              className="p-2 rounded-lg bg-slate-900/60 border border-slate-850 text-indigo-300 hover:text-indigo-200 flex flex-col items-center justify-center gap-0.5 min-w-[54px] h-12 transition-all cursor-pointer"
+              title="Switch Plate Shape (เปลี่ยนรูปทรงกรอบ)"
+            >
+              {(state as any).shape === 'circle' ? <Circle className="w-4 h-4 text-cyan-400" /> : <SquareIcon className="w-4 h-4 text-pink-400" />}
+              <span className="text-[7.5px] font-mono leading-none tracking-tight">
+                {(state as any).shape === 'circle' ? 'CIRCLE' : 'SQUARE'}
+              </span>
+            </button>
+
+            {/* 5. Sweep Auto-Tuner Toggle (สแกนความถี่) */}
+            <button
+              onClick={() => setIsSweeping(!isSweeping)}
+              className={`p-2 rounded-lg flex flex-col items-center justify-center gap-0.5 min-w-[54px] h-12 transition-all cursor-pointer ${
+                isSweeping 
+                  ? 'bg-teal-500/15 border border-teal-500/30 text-teal-300 shadow-[0_0_8px_rgba(20,184,166,0.15)]' 
+                  : 'bg-slate-900/60 border border-slate-850 text-slate-400'
+              }`}
+              title="Auto Frequency Sweep"
+            >
+              <Compass className={`w-4 h-4 ${isSweeping ? 'animate-spin' : ''}`} />
+              <span className="text-[7.5px] font-mono leading-none tracking-tight">SWEEP</span>
+            </button>
+
+            {/* 6. Play / Pause Toggle */}
+            <button
+              onClick={() => setState(prev => ({ ...prev, isPaused: !prev.isPaused }))}
+              className={`p-2 rounded-lg flex flex-col items-center justify-center gap-0.5 min-w-[54px] h-12 transition-all cursor-pointer ${
+                state.isPaused 
+                  ? 'bg-rose-500/15 border border-rose-500/30 text-rose-300' 
+                  : 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300'
+              }`}
+              title={state.isPaused ? "Play Simulation" : "Pause Simulation"}
+            >
+              {state.isPaused ? <Play className="w-4 h-4 fill-rose-400/20" /> : <Pause className="w-4 h-4" />}
+              <span className="text-[7.5px] font-mono leading-none tracking-tight">
+                {state.isPaused ? 'PLAY' : 'PAUSE'}
+              </span>
+            </button>
+
+            {/* 7. Audio Mute / Unmute Toggle */}
+            <button
+              onClick={() => setIsMuted(!isMuted)}
+              className={`p-2 rounded-lg flex flex-col items-center justify-center gap-0.5 min-w-[54px] h-12 transition-all cursor-pointer ${
+                !isMuted 
+                  ? 'bg-cyan-500/15 border border-cyan-500/30 text-cyan-300 shadow-[0_0_8px_rgba(34,211,238,0.15)]' 
+                  : 'bg-slate-900/60 border border-slate-850 text-slate-500'
+              }`}
+              title={isMuted ? "Unmute sound" : "Mute sound"}
+            >
+              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
+              <span className="text-[7.5px] font-mono leading-none tracking-tight">AUDIO</span>
+            </button>
+
+          </div>
 
         </div>
 

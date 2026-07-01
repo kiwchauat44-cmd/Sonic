@@ -70,7 +70,7 @@ export const PlaybackTimeline: React.FC<PlaybackTimelineProps> = ({
   return (
     <div 
       className={`relative w-full transition-all duration-300 z-20 ${
-        isCollapsed ? 'h-0' : 'h-36'
+        isCollapsed ? 'h-0 overflow-hidden' : 'h-auto lg:h-36'
       }`}
     >
       {/* Collapse Handle Button */}
@@ -82,21 +82,21 @@ export const PlaybackTimeline: React.FC<PlaybackTimelineProps> = ({
         {isCollapsed ? (
           <>
             <ChevronUp className="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform" />
-            <span className="text-[10px] font-mono tracking-wider">EXPAND PLAYBACK CONTROLS</span>
+            <span className="text-[10px] font-mono tracking-wider">EXPAND PLAYBACK CONTROLS (แสดงแผงควบคุม)</span>
           </>
         ) : (
           <>
             <ChevronDown className="w-3.5 h-3.5 group-hover:translate-y-0.5 transition-transform" />
-            <span className="text-[10px] font-mono tracking-wider">COLLAPSE CONTROLS</span>
+            <span className="text-[10px] font-mono tracking-wider">COLLAPSE CONTROLS (พับเก็บแผง)</span>
           </>
         )}
       </button>
 
       {/* Content Deck */}
-      <div className="w-full h-36 bg-slate-950/85 backdrop-blur-xl border-t border-slate-900 flex items-center justify-between px-6 text-slate-200">
+      <div className="w-full h-auto lg:h-36 bg-slate-950/90 backdrop-blur-xl border-t border-slate-900 flex flex-col lg:flex-row items-center justify-between p-5 lg:px-6 gap-6 lg:gap-2 text-slate-200">
         
         {/* SECTION A: MATTER TYPE SELECTOR */}
-        <div className="flex flex-col gap-1.5 max-w-sm">
+        <div className="flex flex-col gap-1.5 w-full lg:max-w-sm">
           <label className="text-[10px] font-mono text-slate-500 uppercase tracking-wide">Select Matter (ชนิดของสสาร)</label>
           <div className="flex flex-wrap gap-1.5">
             {(['sand', 'water', 'metal', 'cells', 'quantum'] as MatterType[]).map((matter) => {
@@ -178,10 +178,10 @@ export const PlaybackTimeline: React.FC<PlaybackTimelineProps> = ({
         </div>
 
         {/* SECTION C: PARTICLE DENSITY & COMPILER MULTI-SCREEN VIEW & VISUAL SWITCHES */}
-        <div className="flex items-center gap-6">
+        <div className="flex flex-col sm:flex-row items-center gap-6 w-full lg:w-auto justify-center">
           
           {/* Density Slider */}
-          <div className="flex flex-col gap-1 w-36">
+          <div className="flex flex-col gap-1 w-full sm:w-36">
             <div className="flex justify-between items-center text-[10px] font-mono text-slate-500">
               <span>DENSITY (ความหนาแน่น)</span>
               <span className="text-cyan-400 font-bold">{particleCount}</span>

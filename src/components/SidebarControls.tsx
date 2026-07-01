@@ -98,12 +98,14 @@ export const SidebarControls: React.FC<SidebarControlsProps> = ({
 
   return (
     <div 
-      className={`relative h-full flex flex-row transition-all duration-300 z-30 ${
-        isCollapsed ? 'w-0' : 'w-80'
+      className={`fixed lg:relative left-0 top-0 h-full flex flex-row transition-all duration-300 z-40 lg:z-30 ${
+        isCollapsed 
+          ? '-translate-x-full lg:translate-x-0 lg:w-0 lg:overflow-hidden' 
+          : 'translate-x-0 w-[290px] sm:w-80'
       }`}
     >
       {/* Content Panel */}
-      <div className="w-80 h-full bg-slate-950/85 backdrop-blur-xl border-r border-slate-900 flex flex-col overflow-y-auto overflow-x-hidden p-5 text-slate-200">
+      <div className="w-[290px] sm:w-80 h-full bg-slate-950/90 backdrop-blur-xl border-r border-slate-900 flex flex-col overflow-y-auto overflow-x-hidden p-4 sm:p-5 text-slate-200 shadow-2xl">
         <div className="flex items-center gap-2 mb-6">
           <Sliders className="w-5 h-5 text-cyan-400" />
           <h2 className="text-md font-sans font-semibold tracking-wider text-white uppercase">

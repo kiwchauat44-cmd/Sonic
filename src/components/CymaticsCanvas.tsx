@@ -26,6 +26,30 @@ export const CymaticsCanvas: React.FC<CymaticsCanvasProps> = ({
   height = 600
 }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  
+  // Local state to track actual parent dimensions for crisp 1:1 pixel rendering
+  const [dimensions, setDimensions] = useState({ width: 500, height: 500 });
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      if (!entries || entries.length === 0) return;
+      const { width, height } = entries[0].contentRect;
+      // Guarantee integer pixels and avoid dividing by zero
+      const w = Math.max(250, Math.floor(width));
+      const h = Math.max(250, Math.floor(height));
+      setDimensions({ width: w, height: h });
+    });
+
+    resizeObserver.observe(container);
+
+    return () => {
+      resizeObserver.disconnect();
+    };
+  }, []);
   
   // Local high-performance particles storage
   const particlesRef = useRef<Particle[]>([]);
@@ -609,12 +633,15 @@ export const CymaticsCanvas: React.FC<CymaticsCanvasProps> = ({
   }, [state, rotX, rotY, zoom, hoverPos, isInteracting]);
 
   return (
-    <div className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden bg-slate-950 rounded-2xl border border-slate-900 shadow-2xl group select-none">
+    <div 
+      ref={containerRef}
+      className="relative w-full h-full flex flex-col items-center justify-center overflow-hidden bg-slate-950 rounded-2xl border border-slate-900 shadow-2xl group select-none"
+    >
       <canvas
         id={`cymatics-canvas-${state.id}`}
         ref={canvasRef}
-        width={width}
-        height={height}
+        width={dimensions.width}
+        height={dimensions.height}
         className="w-full h-full block cursor-crosshair focus:outline-none transition-transform duration-300"
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
